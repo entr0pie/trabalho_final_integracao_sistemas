@@ -1,0 +1,32 @@
+{
+  "name": "avaliacao_final_integracao_sistemas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/entr0pie/avaliacao_final_integracao_sistemas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/entr0pie/avaliacao_final_integracao_sistemas/issues"
+  },
+  "homepage": "https://github.com/entr0pie/avaliacao_final_integracao_sistemas#readme",
+  "dependencies": {
+    "@prisma/client": "^6.8.2",
+    "amqplib": "^0.10.8",
+    "axios": "^1.9.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.8.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
