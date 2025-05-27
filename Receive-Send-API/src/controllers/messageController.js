@@ -1,7 +1,7 @@
 // src/controllers/messageController.js
 
 const { sendToQueue } = require('../queue/producer');
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('../prisma/generated');
 const prisma = new PrismaClient();
 
 async function postMessage(req, res) {

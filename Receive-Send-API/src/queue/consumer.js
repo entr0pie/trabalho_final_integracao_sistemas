@@ -1,7 +1,7 @@
 // src/queueue/consumer.js
 
 const amqp = require('amqplib');
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('../prisma/generated');
 
 const prisma = new PrismaClient();
 
