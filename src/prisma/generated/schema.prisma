@@ -9,8 +9,8 @@ datasource db {
 }
 
 model Message {
-    id      Int     @id @default(autoincrement())
-    content String
-    userId  Int
-    createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  content   String
+  userId    Int
+  createdAt DateTime @default(now())
 }
