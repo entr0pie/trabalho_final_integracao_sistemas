@@ -16,12 +16,5 @@ COPY . .
 # Gera o Prisma Client
 RUN npx prisma generate
 
-
 # Expõe a porta da API
 EXPOSE 3000
-
-# Comando padrão ao iniciar o container
-# Antes de iniciar a aplicação
-CMD ["node", "src/server.js"]
-
-
