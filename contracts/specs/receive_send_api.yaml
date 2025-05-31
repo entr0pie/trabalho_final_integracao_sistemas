@@ -1,0 +1,147 @@
+openapi: 3.0.0
+info:
+  title: ReceiveSendAPI
+  description: API para enviar e receber mensagens usando RabbitMQ.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+    description: Servidor local
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+  - name: Mensagens
+    description: Endpoints para envio e recebimento de mensagens.
+
+paths:
+  /message:
+    get:
+      summary: Busca as mensagens com um usuário.
+      description: Busca as mensagens de uma conversa com um usuário.
+      security:
+        - BearerAuth: []
+      tags:
+        - Mensagens
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Usuário alvo para buscar mensagens (entre você e ele).
+      
+      responses:
+        "200":
+          description: Mensagens buscadas com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    userId:
+                      type: integer
+                      example: 2
+                      description: "Usuário que enviou a mensagem"
+                    msg:
+                      type: string
+                      example: "Hello, world!"
+                      description: "Mensagem enviada pelo usuário"
+        "400":
+          description: Input inválido.
+        "401":
+          description: Sem autorização.
+        "500":
+          description: Erro interno no servidor.
+
+    post:
+      summary: Envia uma mensagem para um usuário.
+      description: Envia uma mensagem de texto para um usuário especificado.
+      security:
+        - BearerAuth: []
+      tags:
+        - Mensagens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userIdSend:
+                  type: integer
+                  example: 1
+                  description: "Usuário para enviar a mensagem"
+                userIdReceive:
+                  type: integer
+                  example: 2
+                  description: "Usuário para receber a mensagem"
+                message:
+                  type: string
+                  example: "Olá, mundo!"
+                  description: "Mensagem para enviar"
+      responses:
+        "200":
+          description: Mensagem enviada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Status da operação.
+                    example: "Message sended with success"
+        "400":
+          description: Input inválido.
+        "401":
+          description: Sem autorização.
+        "500":
+          description: Erro interno no servidor.
+
+  /message/worker:
+    post:
+      summary: Atualiza o registro de mensagens de uma conversa.
+      description: Atualiza o registro de mensagens de uma determinada conversa, de forma persistente.
+      security:
+        - BearerAuth: []
+      tags:
+        - Mensagens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userIdSend:
+                  type: integer
+                  example: 1
+                  description: "Usuário que enviou as mensagens"
+                userIdReceive:
+                  type: integer
+                  example: 2
+                  description: "Usuário que recebeu as mensagens"
+
+      responses:
+        "200":
+          description: Registro atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: Status da operação.
+                    example: "ok"
+        "400":
+          description: Input inválido.
+        "401":
+          description: Sem autorização.
+        "500":
+          description: Erro interno no servidor.
