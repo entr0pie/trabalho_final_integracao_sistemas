@@ -1,15 +1,11 @@
-# auth_api
+# Auth_api
 
 > API de autenticação e registro de usuários
 
 ## Setup
 
 - **Verifique o arquivo `.env`**
-
-```sh
-composer install
-php -S 0.0.0.0:8000 -t src
-```
+  
 ##
 
 ### Funcionamento
