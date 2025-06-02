@@ -8,6 +8,7 @@ use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
 use Medoo\Medoo;
 use Predis\Client as RedisClient;
+
 use Thundera\AuthApi\Service\AuthServices;
 use Thundera\AuthApi\Controller\AuthController;
 use Thundera\AuthApi\Controller\HealthController;
@@ -20,7 +21,6 @@ use Thundera\AuthApi\Service\UserService;
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 
-$secretKey = $_ENV['SECRET_KEY'];
 
 $database = new Medoo([
     'type' => 'pgsql',
@@ -38,6 +38,7 @@ $redis = new RedisClient([
     'port'   => $_ENV['CACHE_POST'],
 ]);
 
+
 $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
 
@@ -54,6 +55,8 @@ $healthService = new HealthService($redis, $database);
 $healthController = new HealthController($healthService);
 
 $app->get('/health', [$healthController, 'getHealth']);
+
+$secretKey = $_ENV['SECRET_KEY'];
 
 $authService = new AuthServices($secretKey);
 $authController = new AuthController($authService, $userService, $cache);

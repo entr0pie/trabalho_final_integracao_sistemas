@@ -37,8 +37,6 @@ services:
     container_name: auth_api
     ports:
       - "8000:80"
-    volumes:
-      - ./auth_api/:/var/www/html  
     depends_on:
       - postgres
       - redis
