@@ -7,7 +7,7 @@ services:
       container_name: postgres_custom
       restart: always
       ports:
-        - "5432:5432"
+        - "5433:5432"
       volumes:
         - ./database/sql:/docker-entrypoint-initdb.d
         - postgresdata:/var/lib/postgresql/data

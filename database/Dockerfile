@@ -8,4 +8,4 @@ WORKDIR /docker-entrypoint-initdb.d
 
 COPY sql/1_create_tables.sql ./
 
-EXPOSE 5432
+EXPOSE 5433
