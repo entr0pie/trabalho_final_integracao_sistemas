@@ -9,6 +9,8 @@ class AuthServices
 {
     private string $secretKey;
 
+    #novo commit
+
     public function __construct(string $secretKey) 
     {
         $this->secretKey = $secretKey;

@@ -14,7 +14,8 @@ class AuthController
     private $userService;
     private CacheService $cache;
 
-
+    #novo commit
+    
     public function __construct(AuthServices $authService, UserService $userService, CacheService $cache)
     {
         $this->authService = $authService;
