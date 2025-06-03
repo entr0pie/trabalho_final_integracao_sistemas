@@ -6,7 +6,7 @@ import axios from 'axios';
 export class AuthService {
   async isAuthenticated(token: string, userId: number): Promise<boolean> {
     try {
-      const response = await axios.post('http://localhost:3001/auth/validate', {
+      const response = await axios.post('http://localhost:8000/validate-token', {
         userId,
       }, {
         headers: {
