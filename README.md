@@ -31,5 +31,5 @@ KEYS *
 ##
 
 #### Como utilizar a **Auth_api**: [Clique aqui!](https://github.com/entr0pie/trabalho_final_integracao_sistemas/blob/feat/auth-api/auth_api/README.md)
-
+#### ⚠️ Ao clonar a Auth_api **lembre-se de criar um .env e colar do .env.example**
 
