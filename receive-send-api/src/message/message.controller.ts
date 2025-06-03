@@ -34,9 +34,9 @@ export class MessageController {
   async processMessages(@Body() body) {
     const { userIdSend, userIdReceive } = body;
 
-    const queue = `${userIdSend}${userIdReceive}`;
-    await this.queueService.consume(queue, async (msg: string) => {
-        await this.messageService.saveToDatabase(userIdSend, userIdReceive, msg);
+      const queue = `${userIdSend}${userIdReceive}`;
+      await this.queueService.consume(queue, async (msg: string) => {
+      await this.messageService.saveToDatabase(userIdSend, userIdReceive, msg);
     });
 
     return { msg: 'Worker listening' };
