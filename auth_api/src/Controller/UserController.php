@@ -68,4 +68,18 @@ final class UserController {
         $response->getBody()->write(json_encode($responseData));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
     }
+
+    public function findAllUsers(Request $request, Response $response, array $args): Response
+    {
+        $users = $this->service->findAllUsers();
+    
+        if (empty($users)) {
+            $error = ['error' => 'No users found'];
+            $response->getBody()->write(json_encode($error));
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        }
+    
+        $response->getBody()->write(json_encode($users));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
 }

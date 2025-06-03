@@ -43,4 +43,23 @@ class UserRepositoryImpl implements UserRepository {
         $user->user_id = $data['user_id'];
         return $user;
     }
+
+    public function findAllUsers(): array
+    {
+        $data = $this->database->select('user', '*');
+
+        $users = [];
+        foreach ($data as $row) {
+            $user = new UserModel(
+                $row['name'],
+                $row['last_name'],
+                $row['email'],
+                $row['password']
+            );
+            $user->user_id = $row['user_id'];
+            $users[] = $user;
+        }
+
+        return $users;
+    }
 }

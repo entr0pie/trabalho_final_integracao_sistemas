@@ -50,6 +50,7 @@ $userController = new UserController($userService);
 
 $app->get('/user', [$userController, 'findUserByEmail']);
 $app->post('/user', [$userController, 'createUser']);
+$app->get('/users', [$userController, 'findAllUsers']);
 
 $healthService = new HealthService($redis, $database);
 $healthController = new HealthController($healthService);

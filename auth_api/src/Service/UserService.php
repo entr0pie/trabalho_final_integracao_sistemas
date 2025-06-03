@@ -47,4 +47,33 @@ class UserService {
         $this->cache->set($email, json_encode($user));   
         return $user;
     }
+
+    public function findAllUsers(): array
+    {
+        $cachedData = $this->cache->get('all_users');
+        
+        if ($cachedData) {
+            $data = json_decode($cachedData, true);
+            $users = [];
+            foreach ($data as $item) {
+                $user = new UserModel(
+                    $item['name'],
+                    $item['lastName'],
+                    $item['email'],
+                    $item['password'],
+                );
+                $user->user_id = $item['user_id'];
+                $users[] = $user;
+            }
+            return $users;
+        }
+    
+        $users = $this->repository->findAllUsers();
+        if (empty($users)) {
+            return [];
+        }
+    
+        $this->cache->set('all_users', json_encode($users));
+        return $users;
+    }
 }
