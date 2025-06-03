@@ -25,18 +25,19 @@ export class MessageController {
 
         const queue = `${userIdSend}${userIdReceive}`;
         await this.queueService.sendToQueue(queue, message);
-        await this.messageService.saveToDatabase(userIdSend, userIdReceive, message);
+        await this.messageService.saveToDatabase(userIdSend, userIdReceive, message, token);
         
         return { msg: 'Message sent successfully' };
     }
 
   @Post('/worker')
-  async processMessages(@Body() body) {
+  async processMessages(@Body() body,
+    @Headers('authorization') token: string) {
     const { userIdSend, userIdReceive } = body;
 
       const queue = `${userIdSend}${userIdReceive}`;
       await this.queueService.consume(queue, async (msg: string) => {
-      await this.messageService.saveToDatabase(userIdSend, userIdReceive, msg);
+      await this.messageService.saveToDatabase(userIdSend, userIdReceive, msg, token);
     });
 
     return { msg: 'Worker listening' };

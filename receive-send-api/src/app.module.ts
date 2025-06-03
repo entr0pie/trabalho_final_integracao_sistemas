@@ -7,9 +7,11 @@ import { ConfigModule } from '@nestjs/config';
 import { MessageModule } from './message/message.module';
 import { AuthModule } from './auth/auth.module';
 import { QueueModule } from './queue/queue.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     ConfigModule.forRoot({ isGlobal: true}),
     TypeOrmModule.forRoot({
       type: 'postgres',
