@@ -37,6 +37,6 @@ export class MessageService {
     );
 
     const response = await lastValueFrom(response$);
-    return response.data; // retorna array de mensagens
+    return response.data; 
   }
 }
