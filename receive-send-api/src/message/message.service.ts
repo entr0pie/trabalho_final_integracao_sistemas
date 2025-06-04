@@ -33,7 +33,7 @@ export class MessageService {
           size: 100,
         },
         headers: {
-          Authorization: 'Bearer <TOKEN>',
+          Authorization: 'Bearer ${token}',
         },
       },
     );
