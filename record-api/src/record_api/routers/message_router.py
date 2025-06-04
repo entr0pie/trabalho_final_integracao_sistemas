@@ -1,17 +1,26 @@
-from fastapi import APIRouter
-from fastapi import Body
+from fastapi import APIRouter, Depends, Query
+from src.record_api.services.message_service import get_message_service
 from src.record_api.dtos.save_message_request import SaveMessageRequest
 from src.record_api.dtos.save_message_response import SaveMessageResponse
 from src.record_api.dtos.message_response import MessageResponse
-from src.record_api.services.message_service import MessageServiceDep
+from typing import List
+from src.record_api.services.message_service import MessageService
 
-message_router = APIRouter(prefix='/messages')
+message_router = APIRouter(prefix="/messages", tags=["Messages"])
 
-@message_router.post("", summary="Salva uma nova mensagem", tags=["Mensagens"])
-def save_message(service: MessageServiceDep, data: SaveMessageRequest = Body()) -> SaveMessageResponse:
+@message_router.post("", response_model=SaveMessageResponse, summary="Salva uma nova mensagem")
+def save_message(
+    data: SaveMessageRequest,
+    service: MessageService = Depends(get_message_service)
+):
     return service.save_message(data)
 
-@message_router.get("", summary="Busca as mensagens de uma determinada conversa", tags=["Mensagens"])
-def get_messages(service: MessageServiceDep, user_id_send: int, user_id_receive: int, page: int, size: int) -> list[MessageResponse]:
+@message_router.get("", response_model=List[MessageResponse], summary="Lista mensagens entre dois usuários")
+def get_messages(
+    user_id_send: int = Query(..., description="ID do usuário remetente"),
+    user_id_receive: int = Query(..., description="ID do usuário destinatário"),
+    page: int = Query(1, ge=1, description="Número da página"),
+    size: int = Query(10, ge=1, le=100, description="Tamanho da página"),
+    service: MessageService = Depends(get_message_service)
+):
     return service.get_messages(user_id_send, user_id_receive, page, size)
-

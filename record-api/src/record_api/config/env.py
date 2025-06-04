@@ -5,7 +5,10 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     database_uri: str
-    model_config = SettingsConfigDict(env_file='.env')
+    redis_host: str       
+    redis_port: int       
+
+    model_config = SettingsConfigDict(env_file=".env")
 
 @lru_cache
 def get_env():
