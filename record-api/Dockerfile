@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y curl libpq-dev
 RUN curl -sSL https://install.python-poetry.org | python3
 
 ENV PATH="/root/.local/bin:/app/.venv/bin:$PATH"
+ENV PYTHONPATH=/app/src
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 
 WORKDIR /app
