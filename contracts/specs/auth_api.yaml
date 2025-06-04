@@ -1,0 +1,206 @@
+openapi: 3.0.0
+info:
+  title: AuthAPI
+  description: API para gerenciar usuários e garantir a autorização aos recursos.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+    description: Servidor local
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+  - name: Autenticação e Autorização
+    description: Endpoints para gestão da autenticação e autorização.
+  - name: Gestão de Conta
+    description: Endpoints para gerenciar a conta de usuário.
+
+paths:
+  /token:
+    get:
+      summary: Retorna se o usuário está autenticado ou não.
+      description: Retorna se o usuário está autenticado ou não, usando do JWT.
+      security:
+        - BearerAuth: []
+      tags:
+        - Autenticação e Autorização
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Usuário alvo para verificar autenticação.
+      responses:
+        200:
+          description: Se o usuário está autenticado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auth:
+                    type: boolean
+                    description: "Se o usuário está autenticado ou não"
+        500:
+          description: Erro interno ao tentar recuperar as chaves.
+    post:
+      summary: Autentica um usuário.
+      description: Realiza a autenticação do usuário usando email e senha. Retorna um JWT.
+      tags:
+        - Autenticação e Autorização
+      requestBody:
+        description: Credenciais do usuário para autenticação.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email do usuário.
+                  example: usuario@example.com
+                senha:
+                  type: string
+                  format: password
+                  description: Senha do usuário.
+                  example: "senhaSegura123"
+      responses:
+        200:
+          description: Autenticação bem-sucedida. Retorna o token JWT.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token JWT gerado para o usuário.
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        401:
+          description: Falha na autenticação.
+        500:
+          description: Erro interno ao processar a solicitação.
+  /user:
+    post:
+      summary: Cria um novo usuário.
+      description: Registra um novo usuário no sistema com nome, sobrenome, email e senha.
+      tags:
+        - Gestão de Conta
+      requestBody:
+        description: Dados necessários para criar um novo usuário.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Nome do usuário.
+                  example: "Carlos"
+                lastName:
+                  type: string
+                  description: Sobrenome do usuário.
+                  example: "Silva"
+                email:
+                  type: string
+                  format: email
+                  description: Endereço de email do usuário.
+                  example: "carlos.silva@example.com"
+                password:
+                  type: string
+                  format: password
+                  description: Senha do usuário.
+                  example: "senhaForte123"
+      responses:
+        201:
+          description: Usuário criado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensagem da criação do usuário
+                    example: ok
+                  user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Nome do usuário.
+                        example: "Carlos"
+                      lastName:
+                        type: string
+                        description: Sobrenome do usuário.
+                        example: "Silva"
+                      email:
+                        type: string
+                        format: email
+                        description: Endereço de email do usuário.
+                        example: "carlos.silva@example.com"
+                      password:
+                        type: string
+                        format: password
+                        description: Senha do usuário.
+                        example: "senhaForte123"
+        400:
+          description: Requisição inválida. Campos ausentes ou inválidos.
+        500:
+          description: Erro interno ao processar a solicitação.
+    get:
+      summary: Obtém os dados do usuário.
+      description: Retorna os detalhes do usuário.
+      tags:
+        - Gestão de Conta
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Email do usuário para buscar informações.
+      responses:
+        200:
+          description: Dados do usuário autenticado retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Identificador único do usuário.
+                    example: 1
+                  name:
+                    type: string
+                    description: Nome do usuário.
+                    example: "Carlos"
+                  lastName:
+                    type: string
+                    description: Sobrenome do usuário.
+                    example: "Silva"
+                  email:
+                    type: string
+                    format: email
+                    description: Endereço de email do usuário.
+                    example: "carlos.silva@example.com"
+                  password:
+                    type: string
+                    format: password
+                    description: Senha do usuário.
+                    example: "senhaForte123"
+        
+        401:
+          description: Token inválido ou não fornecido.
+        500:
+          description: Erro interno ao processar a solicitação.

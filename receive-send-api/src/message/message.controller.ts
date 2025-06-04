@@ -56,7 +56,7 @@ export class MessageController {
     const messages = await Promise.all(
       allUsers.map(async (u) => {
         
-        const msgs = await this.messageService.getConversation(u.id, userId, tokenValue);
+        const msgs = await this.messageService.getConversation(u.user_id, userId, tokenValue);
         return msgs.map((m) => ({
           userId: m.userIdSend,
           msg: m.message,

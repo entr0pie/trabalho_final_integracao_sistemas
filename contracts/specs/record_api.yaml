@@ -1,0 +1,131 @@
+openapi: 3.0.0
+info:
+  title: RecordAPI
+  description: API para persistir as mensagens dos usuários.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/
+    description: Servidor local
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+tags:
+  - name: Mensagens
+    description: Endpoints para envio e recebimento de mensagens.
+
+paths:
+  /message:
+    post:
+      summary: Salva uma nova mensagem.
+      description: Permite o envio de uma mensagem entre usuários.
+      tags:
+        - Mensagens
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Dados necessários para salvar a mensagem.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                  description: O conteúdo da mensagem.
+                  example: "Olá, como você está?"
+                userIdSend:
+                  type: integer
+                  minimum: 1
+                  description: ID do usuário que enviou a mensagem.
+                  example: 1
+                userIdReceive:
+                  type: integer
+                  minimum: 1
+                  description: ID do usuário que recebeu a mensagem.
+                  example: 2
+      responses:
+        201:
+          description: Mensagem salva com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status da operação.
+                    example: "ok"
+        400:
+          description: Requisição inválida. Dados ausentes ou inválidos.
+        401:
+          description: Não autorizado. Token não fornecido ou inválido.
+        500:
+          description: Erro interno ao processar a solicitação.
+
+    get:
+      summary: Busca as mensagens de uma determinada conversa.
+      description: Retorna mensagens trocadas entre dois usuários, paginadas.
+      tags:
+        - Mensagens
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: user_id_receive
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: ID do usuário que recebeu a mensagem.
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Número da página.
+        - name: size
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Tamanho da página.
+      responses:
+        200:
+          description: Lista de mensagens recuperada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Identificador único da mensagem.
+                      example: 100
+                    message:
+                      type: string
+                      example: "Olá, como você está?"
+                    user_id_send:
+                      type: integer
+                      example: 1
+                    user_id_receive:
+                      type: integer
+                      example: 2
+        400:
+          description: Requisição inválida. Parâmetros ausentes ou inválidos.
+        401:
+          description: Não autorizado. Token não fornecido ou inválido.
+        500:
+          description: Erro interno ao processar a solicitação.
