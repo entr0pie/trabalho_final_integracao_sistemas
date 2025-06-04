@@ -5,15 +5,17 @@ import { Message } from './entities/message.entity';
 import { MessageService } from './message.service';
 import { MessageController } from './message.controller';
 import { AuthService } from 'src/auth/auth.service';
+import { AuthModule } from 'src/auth/auth.module';
 import { QueueService } from 'src/queue/queue.service';
 import { AuthMiddleware } from 'src/auth/auth.middleware';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Message]),
+    AuthModule,
     HttpModule],
   controllers: [MessageController],
-  providers: [MessageService, AuthService, QueueService],
+  providers: [MessageService, QueueService],
 })
 export class MessageModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

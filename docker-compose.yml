@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  postgres:
+      build:
+        context: ./database
+        dockerfile: Dockerfile
+      container_name: postgres_custom
+      restart: always
+      ports:
+        - "5433:5432"
+      volumes:
+        - ./database/sql:/docker-entrypoint-initdb.d
+        - postgresdata:/var/lib/postgresql/data
+
+      environment:
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: secret
+        POSTGRES_DB: api_messaging
+      networks:
+        - network_trabalho_final
+
+  redis:
+    image: redis/redis-stack-server:latest
+    container_name: redis_trabalho_final
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes: 
+      - redisdata:/data
+    networks:
+      - network_trabalho_final
+
+  auth-api:
+    build: 
+      context: ./auth_api/
+      dockerfile: Dockerfile
+    container_name: auth_api
+    ports:
+      - "8000:80"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - network_trabalho_final
+
+volumes:
+  redisdata:
+  postgresdata:
+
+networks:
+  network_trabalho_final:
+    driver: bridge
+    

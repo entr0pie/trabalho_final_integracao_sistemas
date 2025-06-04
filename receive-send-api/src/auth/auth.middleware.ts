@@ -14,7 +14,9 @@ export class AuthMiddleware implements NestMiddleware {
       throw new UnauthorizedException('Token ou userId não fornecido.');
     }
 
-    const isAuth = await this.authService.isAuthenticated(token.toString(), +userId);
+    const formattedToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+
+    const isAuth = await this.authService.isAuthenticated(token.toString());
 
     if (!isAuth) {
       throw new UnauthorizedException('Usuário não autenticado.');
