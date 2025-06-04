@@ -3,13 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 
+
+
 @Injectable()
 export class MessageService {
     constructor(private readonly httpService: HttpService) {}
 
     async saveToDatabase(userIdSend: number, userIdReceive: number, message: string, token: string) {
         const response$ = this.httpService.post(
-            'http://localhost:8080/message',
+            `${process.env.RECORD_API}`,
             { userIdSend, userIdReceive, message },
             { 
                 headers: {
@@ -23,7 +25,7 @@ export class MessageService {
 
     async getConversation(userId1: number, userId2: number) {
     const response$ = this.httpService.get(
-      `http://localhost:8080/message`,
+      `${process.env.RECORD_API}`,
       {
         params: {
           user_id_receive: userId2,
