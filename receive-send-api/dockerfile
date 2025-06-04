@@ -1,0 +1,37 @@
+# Etapa 1: Build da aplicação
+FROM node:20-alpine AS builder
+
+# Diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copiar arquivos de definição primeiro para melhor cache
+COPY package*.json ./
+
+# Instalar dependências de produção e desenvolvimento
+RUN npm install
+
+# Copiar todo o código-fonte
+COPY . .
+
+# Compilar o projeto
+RUN npm run build
+
+# Etapa 2: Container final para produção
+FROM node:20-alpine
+
+# Diretório de trabalho
+WORKDIR /app
+
+# Copiar apenas arquivos necessários da etapa anterior
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
+
+# Instalar somente dependências de produção
+RUN npm install --omit=dev
+
+
+# Porta que o app escuta
+EXPOSE 3000
+
+# Comando de start
+CMD ["node", "dist/main"]
