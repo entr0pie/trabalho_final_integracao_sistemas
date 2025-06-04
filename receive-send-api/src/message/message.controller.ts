@@ -44,20 +44,26 @@ export class MessageController {
   }
 
   @Get()
-  async getMessages(@Query('userId') userId: number) {
-  const allUsers = await this.authService.getAllUsers();
+  async getMessages(
+    @Query('userId') userId: number,
+    @Headers('authorization') token: string,
+  ) {
+    
+    const tokenValue = token?.replace('Bearer ', '');
 
-  const messages = await Promise.all(
-    allUsers.map(async (u) => {
-      const msgs = await this.messageService.getConversation(u.id, userId);
-      return msgs.map((m) => ({
-        userId: m.userIdSend,
-        msg: m.message,
-      }));
-    }),
-  );
+    const allUsers = await this.authService.getAllUsers();
 
-  return messages.flat();
+    const messages = await Promise.all(
+      allUsers.map(async (u) => {
+        
+        const msgs = await this.messageService.getConversation(u.id, userId, tokenValue);
+        return msgs.map((m) => ({
+          userId: m.userIdSend,
+          msg: m.message,
+        }));
+      }),
+    );
+    return messages.flat();
   }
 }
 

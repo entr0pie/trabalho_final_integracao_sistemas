@@ -41,7 +41,7 @@ export class MessageService {
             size: 100,
           },
           headers: {
-            Authorization: 'Bearer ${token}',
+            Authorization: `Bearer ${token}`,
           },
         },
     );
