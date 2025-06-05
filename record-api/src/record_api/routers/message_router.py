@@ -17,10 +17,10 @@ def save_message(
 
 @message_router.get("", response_model=List[MessageResponse], summary="Lista mensagens entre dois usuários")
 def get_messages(
-    user_id_send: int = Query(..., description="ID do usuário remetente"),
-    user_id_receive: int = Query(..., description="ID do usuário destinatário"),
+    userIdSend: int = Query(..., description="ID do usuário remetente"),
+    userIdReceive: int = Query(..., description="ID do usuário destinatário"),
     page: int = Query(1, ge=1, description="Número da página"),
     size: int = Query(10, ge=1, le=100, description="Tamanho da página"),
     service: MessageService = Depends(get_message_service)
 ):
-    return service.get_messages(user_id_send, user_id_receive, page, size)
+    return service.get_messages(userIdSend, userIdReceive, page, size)

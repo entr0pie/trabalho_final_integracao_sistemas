@@ -25,8 +25,6 @@ export class MessageController {
 
         const queue = `${userIdSend}${userIdReceive}`;
         await this.queueService.sendToQueue(queue, message);
-        await this.messageService.saveToDatabase(userIdSend, userIdReceive, message, token);
-        
         return { msg: 'Message sent successfully' };
     }
 

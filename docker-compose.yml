@@ -6,31 +6,30 @@ services:
       - "5672:5672"
       - "15672:15672" # UI de gerenciamento
     environment:
-      RABBITMQ_DEFAULT_USER: guest # Usuário padrão
-      RABBITMQ_DEFAULT_PASS: guest # Senha padrão
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     networks:
-      - network_trabalho_final # <<< ALTERADO para usar a rede definida
+      - network_trabalho_final
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
   postgres:
-      build:
-        context: ./database
-        dockerfile: Dockerfile
-      container_name: postgres_custom
-      restart: always
-      ports:
-        - "5433:5432"
-      volumes:
-        - ./database/sql:/docker-entrypoint-initdb.d
-        - postgresdata:/var/lib/postgresql/data
-
-      environment:
-        POSTGRES_USER: root
-        POSTGRES_PASSWORD: secret
-        POSTGRES_DB: api_messaging
-      networks:
-        - network_trabalho_final
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: postgres_custom
+    restart: always
+    ports:
+      - "5433:5432" # Mantido 5433 para evitar conflito com um postgres local, se houver
+    volumes:
+      - ./database/sql:/docker-entrypoint-initdb.d
+      - postgresdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: api_messaging
+    networks:
+      - network_trabalho_final
 
   redis:
     image: redis/redis-stack-server:latest
@@ -38,13 +37,13 @@ services:
     restart: always
     ports:
       - "6379:6379"
-    volumes: 
+    volumes:
       - redisdata:/data
     networks:
       - network_trabalho_final
 
   auth-api:
-    build: 
+    build:
       context: ./auth_api/
       dockerfile: Dockerfile
     container_name: auth_api
@@ -56,6 +55,26 @@ services:
     networks:
       - network_trabalho_final
 
+  # --- Adição do serviço record-api ---
+  record-api:
+    build:
+      context: ./record-api/ # Onde seu Dockerfile e o resto do código da record-api estão
+      dockerfile: Dockerfile
+    container_name: record_api # Nome do contêiner
+    ports:
+      - "8080:8080" # Mapeia a porta 8080 do host para a porta 8080 do contêiner
+    depends_on:
+      - postgres # A record-api precisa do banco de dados
+      - redis    # A record-api pode precisar do Redis para cache ou filas, se configurado
+    environment:
+      # Variáveis de ambiente que a Record-API precisa, agora adaptadas para a rede Docker
+      DATABASE_URI: postgresql://root:secret@postgres:5432/api_messaging
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    networks:
+      - network_trabalho_final
+  # --- Fim da adição ---
+
 volumes:
   redisdata:
   postgresdata:
@@ -64,4 +83,3 @@ volumes:
 networks:
   network_trabalho_final:
     driver: bridge
-    
