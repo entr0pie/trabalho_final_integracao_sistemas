@@ -2,7 +2,15 @@
 =======
 # avaliacao_final_integracao_sistemas
 
-### • Kauan Alexandre Mendes da Silva - RGM
+### • Kauan Alexandre Mendes da Silva - RGM: 28952782
+### • João Pedro de Oliveira dos Santos Costa - RGM: 30586887
+### • Caio Henrique Porcel - RGM: 29945771
+### • João Pedro Neumann - RGM: 28636350
+### • Vinicius Rebelatto - RGM: 29254761
+### • Renan Borges - RGM:
+### • Lucas Treska - RGM:
+### •  - RGM:
+
 
 ## 
 
