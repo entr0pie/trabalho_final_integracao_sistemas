@@ -8,6 +8,27 @@ export class AuthService {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
   async isAuthenticated(token: string): Promise<boolean> {
+    console.log(`[AuthService] Verificando autenticação para o token: ${token}`);
+
+    if (!token || typeof token !== 'string') {
+      console.error('[AuthService] Token inválido ou não fornecido para isAuthenticated.');
+      throw new UnauthorizedException('Token não fornecido.');
+    }
+
+    let actualTokenValue = token.trim();
+    const bearerPrefixLower = 'bearer ';
+    const bearerPrefixProper = 'Bearer ';
+
+    // Verifica se o token começa com "bearer " (qualquer case) e extrai o valor puro do token
+    if (actualTokenValue.toLowerCase().startsWith(bearerPrefixLower)) {
+      actualTokenValue = actualTokenValue.substring(bearerPrefixLower.length).trim();
+      console.log(`[AuthService] Prefixo "bearer" (qualquer case) removido. Token puro: "${actualTokenValue}"`);
+    }
+
+    // Monta o cabeçalho final com "Bearer " (maiúsculo) + valor puro do token
+    const authorizationHeaderFinal = `${bearerPrefixProper}${actualTokenValue}`;
+    console.log(`[AuthService] Valor final do cabeçalho Authorization a ser usado para Auth-API: "${authorizationHeaderFinal}"`);
+
     /*const cacheKey = `auth:${token}`;
     const cachedResult = await this.cacheManager.get<boolean>(cacheKey);
 
@@ -15,14 +36,17 @@ export class AuthService {
       console.log(`Cache hit for auth: ${cacheKey}`);
       return cachedResult === true;
     }*/
-   console.log(`Validating token: ${token}`);
 
     try {
+      console.log(`[AuthService] Tentando GET para http://localhost:8000/validate-token`);
       const response = await axios.get('http://localhost:8000/validate-token',{
         headers: {
-          Authorization: token,
+          Authorization: authorizationHeaderFinal,
         },
       });
+
+      console.log('[AuthService] Resposta da Auth-API - Status:', response.status);
+      console.log('[AuthService] Resposta da Auth-API - Data:', response.data);
       /*const isAuthenticated = response.data?.auth === true;
       await this.cacheManager.set(cacheKey, isAuthenticated, 3600); // Cache por 5 minutos
       console.log(`Cache set for all users: ${cacheKey}`);*/
