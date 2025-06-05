@@ -1,5 +1,18 @@
-version: '3.8'
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672" # UI de gerenciamento
+    environment:
+      RABBITMQ_DEFAULT_USER: guest # Usuário padrão
+      RABBITMQ_DEFAULT_PASS: guest # Senha padrão
+    networks:
+      - network_trabalho_final # <<< ALTERADO para usar a rede definida
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
   postgres:
       build:
         context: ./database
@@ -46,6 +59,7 @@ services:
 volumes:
   redisdata:
   postgresdata:
+  rabbitmq_data:
 
 networks:
   network_trabalho_final:
