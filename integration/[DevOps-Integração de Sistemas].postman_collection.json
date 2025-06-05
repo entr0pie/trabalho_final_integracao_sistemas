@@ -1,0 +1,661 @@
+{
+	"info": {
+		"_postman_id": "0a86e5a2-2ac3-4749-9934-dd6e987e7778",
+		"name": "[DevOps/Integração de Sistemas]",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27995767"
+	},
+	"item": [
+		{
+			"name": "AuthAPI",
+			"item": [
+				{
+					"name": "[/health] Should return system health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return service health', () => {",
+									"    const { isOnline } = pm.response.json();",
+									"    pm.expect(isOnline).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auth_api_url}}/health",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/user] Should create a new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('status code should be 201', () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('body should be user created', () => {",
+									"    const { message, user } = pm.response.json();",
+									"    ",
+									"    pm.expect(message).to.eq('ok');",
+									"    pm.expect(user.name).to.eq('Kauan');",
+									"    pm.expect(user.lastName).to.eq('Alexandre');",
+									"    pm.expect(user.email).to.eq('kauan@alexandre.com');",
+									"    pm.expect(user.password).to.eq('teste123');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Kauan\",\n    \"lastName\": \"Alexandre\",\n    \"email\": \"kauan@alexandre.com\",\n    \"password\": \"teste123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auth_api_url}}/user",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/token] Should reject login when no email is provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 400', () => {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('should return error', () => {",
+									"    const { error } = pm.response.json();",
+									"    pm.expect(error).to.eq('Email e senha são obrigatórios');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"teste123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auth_api_url}}/token",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/token] Should reject login when no password is provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 400', () => {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('should return error', () => {",
+									"    const { error } = pm.response.json();",
+									"    pm.expect(error).to.eq('Email e senha são obrigatórios');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"kauan@alexandre.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auth_api_url}}/token",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/token] Should reject login when no user is identified",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 404', () => {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test('should return error', () => {",
+									"    const { error } = pm.response.json();",
+									"    pm.expect(error).to.eq('Usuário não encontrado');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ashdjkhasjkdhsajkdhsjakdhsjakhdsakjhdsakjdhsa@email.com\",\n    \"password\": \"senha\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auth_api_url}}/token",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/token] Should reject login when password is wrong",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 401', () => {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('should return error', () => {",
+									"    const { error } = pm.response.json();",
+									"    pm.expect(error).to.eq('Sem autorização');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"kauan@alexandre.com\",\n    \"password\": \"senhaerrada\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auth_api_url}}/token",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/token] Should login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return a jwt token', () => {",
+									"    const { token } = pm.response.json();",
+									"    pm.expect(token).to.be.not.null;",
+									"",
+									"    pm.collectionVariables.set('bearer_token', token);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"kauan@alexandre.com\",\n    \"password\": \"teste123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auth_api_url}}/token",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/token] Should return true when auth is valid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return auth true', () => {",
+									"    const { auth } = pm.response.json();",
+									"    pm.expect(auth).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auth_api_url}}/token",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/token] Should return false when auth is invalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return auth true', () => {",
+									"    const { auth } = pm.response.json();",
+									"    pm.expect(auth).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "invalid_token",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auth_api_url}}/token",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/user] Should reject search by email when no email is provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 400', () => {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('should return error message', () => {",
+									"    const { error } = pm.response.json();",
+									"    pm.expect(error).to.eq('Email is required');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auth_api_url}}/user?email=",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/user] Should reject search by email when no user is found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 404', () => {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test('should return error message', () => {",
+									"    const { error } = pm.response.json();",
+									"    pm.expect(error).to.eq('User not found');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auth_api_url}}/user?email=ashdjkhasjkdhsajkdhsjakdhsjakhdsakjhdsakjdhsa@email.com",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "ashdjkhasjkdhsajkdhsjakdhsjakhdsakjhdsakjdhsa@email.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/user] Should return user data when user is found by email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('status code should be 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('body should be user created', () => {",
+									"    const user = pm.response.json();",
+									"",
+									"    pm.expect(user.user_id).to.eq(1);    ",
+									"    pm.expect(user.name).to.eq('Kauan');",
+									"    pm.expect(user.lastName).to.eq('Alexandre');",
+									"    pm.expect(user.email).to.eq('kauan@alexandre.com');",
+									"    pm.expect(user.password).to.eq('teste123');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auth_api_url}}/user?email=kauan@alexandre.com",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "kauan@alexandre.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/users] Should return all users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('status code should be 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return a list of users', () => {",
+									"    const users = pm.response.json();",
+									"    pm.expect(Array.isArray(users)).to.be.true;",
+									"    pm.expect(users.length).to.be.greaterThan(0);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auth_api_url}}/users",
+							"host": [
+								"{{auth_api_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "API para autenticação e gestão de usuários."
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearer_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "bearer_token",
+			"value": "bearer_token",
+			"type": "string"
+		},
+		{
+			"key": "auth_api_url",
+			"value": "localhost:8000",
+			"type": "string"
+		}
+	]
+}
