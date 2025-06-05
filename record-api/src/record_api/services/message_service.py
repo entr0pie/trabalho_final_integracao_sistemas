@@ -36,8 +36,8 @@ class MessageService:
 
         stmt = (
             select(MessageModel)
-            .where(MessageModel.userIdSend == userIdSend)
-            .where(MessageModel.userIdReceive == userIdReceive)
+            .where(MessageModel.user_id_send == userIdSend)
+            .where(MessageModel.user_id_receive == userIdReceive)
             .order_by(MessageModel.message_id)
             .limit(size)
             .offset((page - 1) * size)
