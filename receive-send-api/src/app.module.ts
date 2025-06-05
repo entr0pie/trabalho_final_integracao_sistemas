@@ -1,13 +1,9 @@
 import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import * as redisStore from 'cache-manager-redis-store';
-import { CacheModule } from '@nestjs/cache-manager';
 import { HealthModule } from './health/health.module';  // Módulo de saúde da aplicação
 import { MessageModule } from './message/message.module'; // Módulo de mensagens
 import { AuthModule } from './auth/auth.module';  // Módulo de autenticação
 import { QueueModule } from './queue/queue.module';  // Módulo de fila
-import { HttpModule } from '@nestjs/axios';
 import { AuthMiddleware } from './auth/auth.middleware';  // Middleware de autenticação
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -18,20 +14,6 @@ import { AppService } from './app.service';
     ConfigModule.forRoot({
       isGlobal: true,  // Torna as variáveis de ambiente acessíveis globalmente
     }),
-
-    // Configuração do TypeOrm para PostgreSQL
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',  // Valor padrão 'localhost' se DB_HOST não estiver definido
-      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5433,  // Porta do banco, valor padrão 5433
-      username: process.env.DB_USERNAME || 'user',  // Valor padrão 'user' se DB_USERNAME não estiver definido
-      password: process.env.DB_PASSWORD || '',  // Senha vazia por padrão se DB_PASSWORD não estiver definido
-      database: process.env.DB_DATABASE || 'test',  // Valor padrão 'test' se DB_DATABASE não estiver definido
-      autoLoadEntities: true,  // Carrega entidades automaticamente
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,  // false em produção
-    }),
-
     // Módulo de mensagens
     MessageModule,
     // Módulo de autenticação

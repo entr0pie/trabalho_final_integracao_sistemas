@@ -7,15 +7,16 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
     private connection: amqp.Connection | null = null;
     private channel: amqp.Channel | null = null;
     private readonly rabbitmqUri: string;
-    private readonly logger = new Logger(QueueService.name); // Optional: for better logging
+    private readonly logger = new Logger(QueueService.name);
 
     constructor(private configService: ConfigService) {
-        // Get URI from .env, with a fallback (though fallback might not be ideal for production)
-        this.rabbitmqUri = this.configService.get<string>('RABBITMQ_URI') ?? 'amqp://guest:guest@localhost:5672';
-        if (!this.rabbitmqUri) {
-            this.logger.warn('RABBITMQ_URI not found in environment variables. Using default amqp://guest:guest@localhost:5672');
-            this.rabbitmqUri = 'amqp://guest:guest@localhost:5672'; // Default/fallback
+        const uri = this.configService.get<string>('RABBITMQ_URI');
+
+        if (!uri) {
+            throw new Error('Erro: variável RABBITMQ_URI não definida');
         }
+
+        this.rabbitmqUri = uri;
     }
 
     async onModuleInit() {
@@ -35,16 +36,14 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
 
             this.connection.on('error', (err: Error) => {
                 this.logger.error('RabbitMQ connection error:', err.message);
-                this.connection = null; // Reset for potential reconnection attempts
+                this.connection = null;
                 this.channel = null;
-                // Consider implementing a retry mechanism here
             });
 
             this.connection.on('close', () => {
                 this.logger.warn('RabbitMQ connection closed.');
                 this.connection = null;
                 this.channel = null;
-                // Consider implementing a retry mechanism here
             });
 
             this.channel = await this.connection.createChannel();
@@ -54,9 +53,7 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
             this.logger.error(`Failed to connect to RabbitMQ: ${err.message}`, err.stack);
             this.connection = null;
             this.channel = null;
-            // Propagate the error or handle it (e.g., retry after a delay)
-            // For now, if it fails on startup, requests using the queue will fail.
-            throw err; // Or handle more gracefully
+            throw err;
         }
     }
 
@@ -65,7 +62,7 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
             this.logger.warn('Not connected to RabbitMQ. Attempting to reconnect...');
             await this.connect();
         }
-        if (!this.channel) { // Check again after attempting to connect
+        if (!this.channel) {
              this.logger.error('Failed to establish RabbitMQ channel after reconnect attempt.');
              throw new Error('RabbitMQ channel is not available.');
         }
@@ -96,8 +93,7 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
                         this.channel!.ack(msg);
                     } catch (processingError) {
                         this.logger.error(`Error processing message from queue "${queueName}": ${processingError.message}`, processingError.stack);
-                        // Decide whether to nack and requeue, or nack and discard
-                        this.channel!.nack(msg, false, false); // false: don't requeue
+                        this.channel!.nack(msg, false, false);
                     }
                 }
             });

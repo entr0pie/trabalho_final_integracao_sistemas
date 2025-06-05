@@ -2,10 +2,21 @@
 import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+  private readonly authBaseUrl: string;
+  
+  constructor(private readonly config: ConfigService) {
+    const authBaseUrl = this.config.get<string>('AUTH_API_BASE_URL');
+    
+    if (!authBaseUrl) {
+      throw new Error('Erro: variável AUTH_API_BASE_URL não definida')
+    }
+
+    this.authBaseUrl = authBaseUrl;
+  }
 
   async isAuthenticated(token: string): Promise<boolean> {
     console.log(`[AuthService] Verificando autenticação para o token: ${token}`);
@@ -29,17 +40,9 @@ export class AuthService {
     const authorizationHeaderFinal = `${bearerPrefixProper}${actualTokenValue}`;
     console.log(`[AuthService] Valor final do cabeçalho Authorization a ser usado para Auth-API: "${authorizationHeaderFinal}"`);
 
-    /*const cacheKey = `auth:${token}`;
-    const cachedResult = await this.cacheManager.get<boolean>(cacheKey);
-
-    if (cachedResult !== undefined) {
-      console.log(`Cache hit for auth: ${cacheKey}`);
-      return cachedResult === true;
-    }*/
-
     try {
-      console.log(`[AuthService] Tentando GET para http://localhost:8000/validate-token`);
-      const response = await axios.get('http://localhost:8000/validate-token',{
+      console.log(`[AuthService] Tentando GET para ${this.authBaseUrl}/token`);
+      const response = await axios.get(`${this.authBaseUrl}/token`,{
         headers: {
           Authorization: authorizationHeaderFinal,
         },
@@ -47,11 +50,8 @@ export class AuthService {
 
       console.log('[AuthService] Resposta da Auth-API - Status:', response.status);
       console.log('[AuthService] Resposta da Auth-API - Data:', response.data);
-      /*const isAuthenticated = response.data?.auth === true;
-      await this.cacheManager.set(cacheKey, isAuthenticated, 3600); // Cache por 5 minutos
-      console.log(`Cache set for all users: ${cacheKey}`);*/
-
-      return response.data;
+      
+      return response.data?.auth;
     } catch (err) {
       console.error('Erro ao autenticar:', err.message);
       throw new UnauthorizedException('Falha na autenticação com a Auth-API.');
@@ -60,11 +60,7 @@ export class AuthService {
 
   async getAllUsers(): Promise<{ user_id: number; email: string; name: string; lastName: string; password: string }[]> {
     try {
-        const response = await axios.get('http://localhost:8000/users', {
-        headers: {
-            Authorization: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InVzdWFyaW8xQGVtYWlsLmNvbSIsImV4cCI6MTc0OTAwMTI5M30.ROPnGd3E664jN8B69KeE5W1rs1D1uP1gfcCYfFvg0Og',
-        },
-        });
+        const response = await axios.get(`${this.authBaseUrl}/users`);
         return response.data;
     } catch (err) {
         console.error('Erro ao buscar todos os usuários:', err.message);
