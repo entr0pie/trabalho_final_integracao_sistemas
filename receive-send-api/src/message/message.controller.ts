@@ -3,7 +3,6 @@ import {
     Body,
     Controller,
     Get,
-    Headers,
     Post,
     Query } from '@nestjs/common';
 
@@ -19,23 +18,22 @@ export class MessageController {
         private readonly messageService: MessageService,
     ) {}
 
-    @Post()
-    async sendMessage(@Body() body, @Headers('authorization') token: string) {
-        const {userIdSend, userIdReceive, message} = body;
+  @Post()
+  async sendMessage(@Body() body) {
+      const {userIdSend, userIdReceive, message} = body;
 
-        const queue = `${userIdSend}${userIdReceive}`;
-        await this.queueService.sendToQueue(queue, message);
-        return { msg: 'Message sent successfully' };
-    }
+      const queue = `${userIdSend}${userIdReceive}`;
+      await this.queueService.sendToQueue(queue, message);
+      return { msg: 'Message sent successfully' };
+  }
 
   @Post('/worker')
-  async processMessages(@Body() body,
-    @Headers('authorization') token: string) {
+  async processMessages(@Body() body) {
     const { userIdSend, userIdReceive } = body;
 
       const queue = `${userIdSend}${userIdReceive}`;
       await this.queueService.consume(queue, async (msg: string) => {
-      await this.messageService.saveToDatabase(userIdSend, userIdReceive, msg, token);
+      await this.messageService.saveToDatabase(userIdSend, userIdReceive, msg);
     });
 
     return { msg: 'Worker listening' };
@@ -43,18 +41,14 @@ export class MessageController {
 
   @Get()
   async getMessages(
-    @Query('userId') userId: number,
-    @Headers('authorization') token: string,
+    @Query('userId') userId: number
   ) {
-    
-    const tokenValue = token?.replace('Bearer ', '');
-
     const allUsers = await this.authService.getAllUsers();
 
     const messages = await Promise.all(
       allUsers.map(async (u) => {
         
-        const msgs = await this.messageService.getConversation(u.user_id, userId, tokenValue);
+        const msgs = await this.messageService.getConversation(u.user_id, userId);
         return msgs.map((m) => ({
           userId: m.userIdSend,
           msg: m.message,

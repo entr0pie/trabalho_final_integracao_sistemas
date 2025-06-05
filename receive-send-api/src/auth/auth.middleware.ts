@@ -8,27 +8,16 @@ export class AuthMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     const token = req.headers['authorization'];
-    const bodyUserIdSend = req.body?.userIdSend;
-    const bodyUserId = req.body?.userId;
-    const queryUserId = req.query?.userId;
-
-     const userId = bodyUserIdSend || queryUserId || bodyUserId;
-
-     // Logs para depuração
+    // Logs para depuração
     console.log('-----------------------------------------');
     console.log('[AuthMiddleware] Verificando token e userId...');
     console.log('[AuthMiddleware] Token recebido (req.headers["authorization"]):', token);
     console.log('[AuthMiddleware] req.body:', JSON.stringify(req.body, null, 2)); // Mostra o corpo da requisição
-    console.log('[AuthMiddleware] userIdSend (do corpo):', bodyUserIdSend);
-    console.log('[AuthMiddleware] userId (do corpo, fallback):', bodyUserId);
-    console.log('[AuthMiddleware] userId (da query):', queryUserId);
-    console.log('[AuthMiddleware] userId final determinado:', userId);
     console.log('-----------------------------------------');
 
-    if (!token || !userId) {
-      console.error('[AuthMiddleware] FALHA: Token ou userId não fornecido.');
-      console.error(`[AuthMiddleware] Detalhes - Token existe: ${!!token}, UserId existe: ${!!userId} (valor: ${userId})`);
-      throw new UnauthorizedException('Token ou userId não fornecido.');
+    if (!token) {
+      console.error('[AuthMiddleware] FALHA: Token não fornecido.');
+      throw new UnauthorizedException('Token não fornecido.');
     }
 
     const tokenString = String(token);
