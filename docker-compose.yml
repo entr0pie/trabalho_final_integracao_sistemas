@@ -1,5 +1,24 @@
 version: '3.8'
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672" # UI de gerenciamento
+    environment:
+      RABBITMQ_DEFAULT_USER: guest # Usuário padrão
+      RABBITMQ_DEFAULT_PASS: guest # Senha padrão
+    networks:
+      - network_trabalho_final # <<< ALTERADO para usar a rede definida
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   postgres:
       build:
         context: ./database
@@ -13,11 +32,16 @@ services:
         - postgresdata:/var/lib/postgresql/data
 
       environment:
-        POSTGRES_USER: root
-        POSTGRES_PASSWORD: secret
-        POSTGRES_DB: api_messaging
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_DB}
       networks:
         - network_trabalho_final
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
   redis:
     image: redis/redis-stack-server:latest
@@ -29,6 +53,11 @@ services:
       - redisdata:/data
     networks:
       - network_trabalho_final
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   auth-api:
     build: 
@@ -38,14 +67,27 @@ services:
     ports:
       - "8000:80"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     networks:
       - network_trabalho_final
 
 volumes:
   redisdata:
   postgresdata:
+  rabbitmq_data:
 
 networks:
   network_trabalho_final:
