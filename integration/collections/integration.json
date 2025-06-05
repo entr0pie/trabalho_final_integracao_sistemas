@@ -612,6 +612,377 @@
 				}
 			],
 			"description": "API para autenticação e gestão de usuários."
+		},
+		{
+			"name": "RecordAPI",
+			"item": [
+				{
+					"name": "[/health] Should return system health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return service health', () => {",
+									"    const { status, detail } = pm.response.json();",
+									"    pm.expect(status).to.eq('UP');",
+									"    pm.expect(detail.database).to.be.true;",
+									"    pm.expect(detail.redis).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{record_api_url}}/health",
+							"host": [
+								"{{record_api_url}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] should not create message when no message is present",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 422', () => {",
+									"    pm.response.to.have.status(422);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id_send\": 2345678,\n    \"user_id_receive\": 2345679\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{record_api_url}}/message",
+							"host": [
+								"{{record_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] should not create message when no user_id_send is present",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 422', () => {",
+									"    pm.response.to.have.status(422);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id_receive\": 2345678,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{record_api_url}}/message",
+							"host": [
+								"{{record_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] should not create message when no user_id_receive is present",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 422', () => {",
+									"    pm.response.to.have.status(422);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id_send\": 2345679,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{record_api_url}}/message",
+							"host": [
+								"{{record_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] should not create message when the user_id_send is not identifiable",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 500', () => {",
+									"    pm.response.to.have.status(500);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id_send\": 999999999,\n    \"user_id_receive\": 2345678,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{record_api_url}}/message",
+							"host": [
+								"{{record_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] should not create message when the user_id_receive is not identifiable",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 500', () => {",
+									"    pm.response.to.have.status(500);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id_send\": 2345678,\n    \"user_id_receive\": 999999999,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{record_api_url}}/message",
+							"host": [
+								"{{record_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] should create message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should save a message', () => {",
+									"    const { status } = pm.response.json();",
+									"    pm.expect(status).to.eq('success');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id_send\": 2345678,\n    \"user_id_receive\": 2345679,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{record_api_url}}/message",
+							"host": [
+								"{{record_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] should retrieve messages",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should retrieve messages', () => {",
+									"    const messages = pm.response.json();",
+									"    const sendedMessage = messages.find((it) => it.message === 'Uma mensagem de exemplo');",
+									"",
+									"    pm.expect(sendedMessage).to.exist;",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{record_api_url}}/message?user_id_send=2345678&user_id_receive=2345679&page=1&size=10",
+							"host": [
+								"{{record_api_url}}"
+							],
+							"path": [
+								"message"
+							],
+							"query": [
+								{
+									"key": "user_id_send",
+									"value": "2345678"
+								},
+								{
+									"key": "user_id_receive",
+									"value": "2345679"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {
@@ -655,6 +1026,11 @@
 		{
 			"key": "auth_api_url",
 			"value": "localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "record_api_url",
+			"value": "localhost:9000",
 			"type": "string"
 		}
 	]
