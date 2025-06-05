@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # avaliacao_final_integracao_sistemas
 
 ### • Kauan Alexandre Mendes da Silva - RGM: 28952782
