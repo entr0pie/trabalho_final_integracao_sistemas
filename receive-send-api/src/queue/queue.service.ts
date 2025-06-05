@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as amqp from 'amqplib';
 
 @Injectable()
-export class QueueService implements OnModuleInit, OnModuleDestroy {
+export class QueueService implements OnModuleDestroy {
     private connection: amqp.Connection | null = null;
     private channel: amqp.Channel | null = null;
     private readonly rabbitmqUri: string;
@@ -17,10 +17,6 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
         }
 
         this.rabbitmqUri = uri;
-    }
-
-    async onModuleInit() {
-        await this.connect();
     }
 
     async connect(): Promise<void> {
@@ -69,6 +65,7 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
     }
 
     async sendToQueue(queueName: string, message: string): Promise<void> {
+        await this.connect();
         await this.ensureConnected();
         try {
             await this.channel!.assertQueue(queueName, { durable: true });
@@ -81,6 +78,7 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
     }
 
     async consume(queueName: string, callback: (msg: string) => void | Promise<void>): Promise<void> {
+        await this.connect();
         await this.ensureConnected();
         try {
             await this.channel!.assertQueue(queueName, { durable: true });

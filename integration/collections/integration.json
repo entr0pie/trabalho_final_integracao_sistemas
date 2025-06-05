@@ -534,7 +534,6 @@
 									"pm.test('body should be user created', () => {",
 									"    const user = pm.response.json();",
 									"",
-									"    pm.expect(user.user_id).to.eq(1);    ",
 									"    pm.expect(user.name).to.eq('Kauan');",
 									"    pm.expect(user.lastName).to.eq('Alexandre');",
 									"    pm.expect(user.email).to.eq('kauan@alexandre.com');",

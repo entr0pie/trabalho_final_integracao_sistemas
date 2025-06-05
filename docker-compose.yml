@@ -12,6 +12,11 @@ services:
       - network_trabalho_final
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   postgres:
     build:
@@ -20,7 +25,7 @@ services:
     container_name: postgres_custom
     restart: always
     ports:
-      - "5433:5432" # Mantido 5433 para evitar conflito com um postgres local, se houver
+      - "5432:5432"
     volumes:
       - ./database/sql:/docker-entrypoint-initdb.d
       - postgresdata:/var/lib/postgresql/data
@@ -55,25 +60,44 @@ services:
     networks:
       - network_trabalho_final
 
-  # --- Adição do serviço record-api ---
   record-api:
     build:
-      context: ./record-api/ # Onde seu Dockerfile e o resto do código da record-api estão
+      context: ./record-api/ 
       dockerfile: Dockerfile
-    container_name: record_api # Nome do contêiner
+    container_name: record_api
     ports:
-      - "8080:8080" # Mapeia a porta 8080 do host para a porta 8080 do contêiner
+      - "8080:8080" 
     depends_on:
-      - postgres # A record-api precisa do banco de dados
-      - redis    # A record-api pode precisar do Redis para cache ou filas, se configurado
+      - postgres
+      - redis  
     environment:
-      # Variáveis de ambiente que a Record-API precisa, agora adaptadas para a rede Docker
       DATABASE_URI: postgresql://root:secret@postgres:5432/api_messaging
       REDIS_HOST: redis
       REDIS_PORT: 6379
     networks:
       - network_trabalho_final
-  # --- Fim da adição ---
+  
+  receive-send-api:
+    build:
+      context: ./receive-send-api/ 
+      dockerfile: Dockerfile
+    container_name: receive_send_api
+    ports:
+      - "3000:3000" 
+    depends_on:
+      - auth-api 
+      - record-api 
+      - rabbitmq
+      - redis
+    environment:
+      PORT: 3000
+      RECORD_API_BASE_URL: http://record-api:8080
+      AUTH_API_BASE_URL: http://auth_api:80
+      RABBITMQ_URI: amqp://guest:guest@rabbitmq:5672
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    networks:
+      - network_trabalho_final
 
 volumes:
   redisdata:

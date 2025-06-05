@@ -4,6 +4,9 @@ namespace Thundera\AuthApi;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+error_reporting(0);
+ini_set('display_errors', '0');
+
 use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
 use Medoo\Medoo;
