@@ -7,9 +7,9 @@
 ### • Caio Henrique Porcel - RGM: 29945771
 ### • João Pedro Neumann - RGM: 28636350
 ### • Vinicius Rebelatto - RGM: 29254761
-### • Renan Borges - RGM:
-### • Lucas Treska - RGM:
-### •  - RGM:
+### • Renan Borges - RGM: 34025015
+### • Lucas Treska - RGM: 34131493
+### • Matheus Santos - RGM: 29389437
 
 
 ## 
