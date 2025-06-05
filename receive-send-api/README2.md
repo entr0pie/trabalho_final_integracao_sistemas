@@ -23,15 +23,15 @@ Um endpoint específico (worker) consome os dados da fila e os insere em uma tab
 Consulta de Mensagens
 A API fornece um endpoint para consultar as mensagens armazenadas na tabela, e esta consulta também exige validação via JWT, garantindo segurança no acesso.
 
-# 📦 Receive-Send API
+# Receive-Send API
 
 > Serviço responsável por enviar, processar e recuperar mensagens entre usuários usando filas e armazenamento em banco de dados.
 
 ---
 
-## 🚀 Endpoints
+## Endpoints
 
-### ✅ POST /message
+### POST /message
 **Descrição:** Envia uma mensagem de um usuário para outro. A mensagem é adicionada na fila e salva no banco de dados.
 
 **Headers:**
@@ -57,7 +57,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 🛠️ POST /message/worker
+### POST /message/worker
 **Descrição:** Inicia o consumo de mensagens da fila entre dois usuários e persiste no banco.
 
 **Headers:**
@@ -82,7 +82,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 📨 GET /message
+### GET /message
 **Descrição:** Retorna todas as mensagens trocadas entre o usuário autenticado e os demais usuários do sistema.
 
 **Headers:**
@@ -111,28 +111,12 @@ Authorization: Bearer <token>
 
 ---
 
-## 🧱 Tecnologias Usadas
+## Tecnologias Usadas
 - NestJS com TypeScript
 - RabbitMQ para mensageria
 - PostgreSQL como banco relacional
 - Axios para comunicação entre serviços
 - JWT para autenticação via token
-
----
-
-## 🗂️ Organização
-
-```
-receive-send-api/
-├── src/
-│   ├── message/
-│   │   ├── message.controller.ts
-│   │   ├── message.module.ts
-│   │   └── message.service.ts
-│   ├── queue/
-│   │   └── queue.service.ts
-│   └── main.ts
-```
 
 
 
