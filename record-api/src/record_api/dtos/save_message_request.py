@@ -7,5 +7,5 @@ class SaveMessageRequest(BaseModel):
     userIdReceive: int = Field(..., ge=1, description="Id do usuário que recebeu a mensagem")
 
     def create_model(self) -> MessageModel:
-        return MessageModel(message=self.message, userIdSend=self.userIdSend, userIdReceive=self.userIdReceive)
+        return MessageModel(message=self.message, user_id_send=self.userIdSend, user_id_receive=self.userIdReceive)
 

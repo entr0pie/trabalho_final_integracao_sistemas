@@ -659,7 +659,7 @@
 					"response": []
 				},
 				{
-					"name": "[/message] should not create message when no message is present",
+					"name": "[/messages] should not create message when no message is present",
 					"event": [
 						{
 							"listen": "test",
@@ -682,7 +682,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user_id_send\": 2345678,\n    \"user_id_receive\": 2345679\n}",
+							"raw": "{\n    \"userIdSend\": 2345678,\n    \"userIdReceive\": 2345679\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -690,19 +690,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{record_api_url}}/message",
+							"raw": "{{record_api_url}}/messages",
 							"host": [
 								"{{record_api_url}}"
 							],
 							"path": [
-								"message"
+								"messages"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "[/message] should not create message when no user_id_send is present",
+					"name": "[/messages] should not create message when no user_id_send is present",
 					"event": [
 						{
 							"listen": "test",
@@ -725,7 +725,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user_id_receive\": 2345678,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"raw": "{\n    \"userIdReceive\": 2345678,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -733,19 +733,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{record_api_url}}/message",
+							"raw": "{{record_api_url}}/messages",
 							"host": [
 								"{{record_api_url}}"
 							],
 							"path": [
-								"message"
+								"messages"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "[/message] should not create message when no user_id_receive is present",
+					"name": "[/messages] should not create message when no user_id_receive is present",
 					"event": [
 						{
 							"listen": "test",
@@ -768,7 +768,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user_id_send\": 2345679,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"raw": "{\n    \"userIdSend\": 2345679,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -776,19 +776,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{record_api_url}}/message",
+							"raw": "{{record_api_url}}/messages",
 							"host": [
 								"{{record_api_url}}"
 							],
 							"path": [
-								"message"
+								"messages"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "[/message] should not create message when the user_id_send is not identifiable",
+					"name": "[/messages] should not create message when the user_id_send is not identifiable",
 					"event": [
 						{
 							"listen": "test",
@@ -811,7 +811,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user_id_send\": 999999999,\n    \"user_id_receive\": 2345678,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"raw": "{\n    \"userIdSend\": 999999999,\n    \"userIdReceive\": 2345678,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -819,19 +819,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{record_api_url}}/message",
+							"raw": "{{record_api_url}}/messages",
 							"host": [
 								"{{record_api_url}}"
 							],
 							"path": [
-								"message"
+								"messages"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "[/message] should not create message when the user_id_receive is not identifiable",
+					"name": "[/messages] should not create message when the user_id_receive is not identifiable",
 					"event": [
 						{
 							"listen": "test",
@@ -854,7 +854,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user_id_send\": 2345678,\n    \"user_id_receive\": 999999999,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"raw": "{\n    \"userIdSend\": 2345678,\n    \"userIdReceive\": 999999999,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -862,19 +862,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{record_api_url}}/message",
+							"raw": "{{record_api_url}}/messages",
 							"host": [
 								"{{record_api_url}}"
 							],
 							"path": [
-								"message"
+								"messages"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "[/message] should create message",
+					"name": "[/messages] should create message",
 					"event": [
 						{
 							"listen": "test",
@@ -903,7 +903,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user_id_send\": 2345678,\n    \"user_id_receive\": 2345679,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
+							"raw": "{\n    \"userIdSend\": 2345678,\n    \"userIdReceive\": 2345679,\n    \"message\": \"Uma mensagem de exemplo\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -911,19 +911,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{record_api_url}}/message",
+							"raw": "{{record_api_url}}/messages",
 							"host": [
 								"{{record_api_url}}"
 							],
 							"path": [
-								"message"
+								"messages"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "[/message] should retrieve messages",
+					"name": "[/messages] should retrieve messages",
 					"event": [
 						{
 							"listen": "test",
@@ -953,20 +953,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{record_api_url}}/message?user_id_send=2345678&user_id_receive=2345679&page=1&size=10",
+							"raw": "{{record_api_url}}/messages?userIdSend=2345678&userIdReceive=2345679&page=1&size=10",
 							"host": [
 								"{{record_api_url}}"
 							],
 							"path": [
-								"message"
+								"messages"
 							],
 							"query": [
 								{
-									"key": "user_id_send",
+									"key": "userIdSend",
 									"value": "2345678"
 								},
 								{
-									"key": "user_id_receive",
+									"key": "userIdReceive",
 									"value": "2345679"
 								},
 								{
@@ -1030,7 +1030,7 @@
 		},
 		{
 			"key": "record_api_url",
-			"value": "localhost:9000",
+			"value": "localhost:8080",
 			"type": "string"
 		}
 	]

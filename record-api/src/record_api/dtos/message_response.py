@@ -14,7 +14,7 @@ class MessageResponse(BaseModel):
         return MessageResponse(
             message_id=model.message_id,
             message=model.message,
-            userIdSend=model.userIdSend,    # Mapeando userIdSend para user_id_send
-            userIdReceive=model.userIdReceive # Mapeando userIdReceive para user_id_receive
+            userIdSend=model.user_id_send,    # Mapeando userIdSend para user_id_send
+            userIdReceive=model.user_id_receive # Mapeando userIdReceive para user_id_receive
         )
     
