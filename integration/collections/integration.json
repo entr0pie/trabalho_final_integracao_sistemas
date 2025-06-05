@@ -610,8 +610,7 @@
 					},
 					"response": []
 				}
-			],
-			"description": "API para autenticação e gestão de usuários."
+			]
 		},
 		{
 			"name": "RecordAPI",
@@ -983,6 +982,510 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "ReceiveSendAPI",
+			"item": [
+				{
+					"name": "[/health] Should return system health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return service health', () => {",
+									"    const { status, detail } = pm.response.json();",
+									"    pm.expect(status).to.eq('UP');",
+									"    pm.expect(detail.auth_api).to.be.true;",
+									"    pm.expect(detail.record_api).to.be.true;",
+									"    pm.expect(detail.redis).to.be.true;",
+									"    pm.expect(detail.rabbitmq).to.be.true;",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{receive_send_api_url}}/health",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] Should deny when no token is sent",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 401', () => {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('should return unauthorized', () => {",
+									"    const { message, error, statusCode } = pm.response.json();",
+									"    pm.expect(message).to.eq('Token não fornecido.');",
+									"    pm.expect(error).to.eq('Unauthorized');",
+									"    pm.expect(statusCode).to.eq(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userIdSend\": 1,\n    \"userIdReceive\": 2,\n    \"message\": \"Olá, mundo!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{receive_send_api_url}}/message",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] Should deny when token is invalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 401', () => {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('should return unauthorized', () => {",
+									"    const { message, error, statusCode } = pm.response.json();",
+									"    pm.expect(message).to.eq('Usuário não autenticado.');",
+									"    pm.expect(error).to.eq('Unauthorized');",
+									"    pm.expect(statusCode).to.eq(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "invalid_token",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userIdSend\": 1,\n    \"userIdReceive\": 2,\n    \"message\": \"Olá, mundo!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{receive_send_api_url}}/message",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] Should sent message when authenticated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 201', () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('should return success message', () => {",
+									"    const { msg } = pm.response.json();",
+									"    pm.expect(msg).to.eq('Message sent successfully');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userIdSend\": 2345678,\n    \"userIdReceive\": 2345679,\n    \"message\": \"Olá, mundo!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{receive_send_api_url}}/message",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message/worker] Should deny when no token is sent",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 401', () => {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('should return unauthorized', () => {",
+									"    const { message, error, statusCode } = pm.response.json();",
+									"    pm.expect(message).to.eq('Token não fornecido.');",
+									"    pm.expect(error).to.eq('Unauthorized');",
+									"    pm.expect(statusCode).to.eq(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{receive_send_api_url}}/message/worker",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message",
+								"worker"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message/worker] Should deny when token is invalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 401', () => {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('should return unauthorized', () => {",
+									"    const { message, error, statusCode } = pm.response.json();",
+									"    pm.expect(message).to.eq('Usuário não autenticado.');",
+									"    pm.expect(error).to.eq('Unauthorized');",
+									"    pm.expect(statusCode).to.eq(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "invalid_token",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{receive_send_api_url}}/message/worker",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message",
+								"worker"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message/worker] Should listen to messages",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 201', () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('should return unauthorized', () => {",
+									"    const { msg } = pm.response.json();",
+									"    pm.expect(msg).to.eq('Worker listening');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userIdSend\": 2345678,\n    \"userIdReceive\": 2345679\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{receive_send_api_url}}/message/worker",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message",
+								"worker"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] Should deny when no token is sent",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 401', () => {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('should return unauthorized', () => {",
+									"    const { message, error, statusCode } = pm.response.json();",
+									"    pm.expect(message).to.eq('Token não fornecido.');",
+									"    pm.expect(error).to.eq('Unauthorized');",
+									"    pm.expect(statusCode).to.eq(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{receive_send_api_url}}/message",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] Should deny when token is invalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 401', () => {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('should return unauthorized', () => {",
+									"    const { message, error, statusCode } = pm.response.json();",
+									"    pm.expect(message).to.eq('Usuário não autenticado.');",
+									"    pm.expect(error).to.eq('Unauthorized');",
+									"    pm.expect(statusCode).to.eq(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "invalid_token",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{receive_send_api_url}}/message",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] Should reject when no user is passed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 500', () => {",
+									"    pm.response.to.have.status(500);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{receive_send_api_url}}/message",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[/message] Should return user messages",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('should return status 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return message sended before', () => {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.length).to.be.greaterThan(0);",
+									"",
+									"    const message = response.find((it) => it.userId === 2345678 && it.msg === \"Olá, mundo!\");",
+									"    pm.expect(!!message).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{receive_send_api_url}}/message?userId=2345679",
+							"host": [
+								"{{receive_send_api_url}}"
+							],
+							"path": [
+								"message"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "2345679"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {
@@ -1031,6 +1534,11 @@
 		{
 			"key": "record_api_url",
 			"value": "localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "receive_send_api_url",
+			"value": "localhost:3000",
 			"type": "string"
 		}
 	]
