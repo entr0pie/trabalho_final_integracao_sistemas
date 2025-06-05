@@ -1,7 +1,6 @@
 <?php
 
 namespace Thundera\AuthApi\Tests\Service;
-
 use PHPUnit\Framework\TestCase;
 use Thundera\AuthApi\Model\UserModel;
 use Thundera\AuthApi\Repository\UserRepository;

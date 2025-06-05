@@ -62,7 +62,7 @@ $secretKey = $_ENV['SECRET_KEY'];
 $authService = new AuthServices($secretKey);
 $authController = new AuthController($authService, $userService, $cache);
 
-$app->post('/login', [$authController, 'login']);
-$app->get('/validate-token', [$authController, 'validateToken']);
+$app->get('/token', callable: [$authController, 'validateToken']);
+$app->post('/token', [$authController, 'login']);
 
 $app->run();

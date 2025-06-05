@@ -46,9 +46,11 @@ class AuthController
         {
             $token = $this->authService->generateJWT(['email' => $email]);
             $response->getBody()->write(json_encode(['token' => $token]));            
-            return $response->withHeader('Content-Type', 'application/json', $email)->withStatus(200);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         }
 
+        $response->getBody()->write(json_encode(['error' => 'Sem autorização']));            
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
     }
 
     public function validateToken(Request $request, Response $response)
@@ -67,22 +69,22 @@ class AuthController
         $cachedData = $this->cache->get($token);
         if($cachedData) {
             $decoded = json_decode($cachedData, true);
-            $response->getBody()->write(json_encode(['message' => 'Token válido']));
+            $response->getBody()->write(json_encode(['auth' => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         }
 
         try
         {
             $decoded = $this->authService->validateJWT($token);
-            $response->getBody()->write(json_encode(['message' => 'Token válido']));
+            $response->getBody()->write(json_encode(['auth' => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
 
             $this->cache->set($decoded->email, json_encode($decoded));
         }
         catch (\Exception $e) 
         {
-            $response->getBody()->write(json_encode(['error' => 'Token inválido ou expirado']));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+            $response->getBody()->write(json_encode(['auth' => false]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         }
 
     }
