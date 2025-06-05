@@ -4,7 +4,7 @@ API para registro e recuperação de mensagens entre usuários, utilizando FastA
 
 ---
 
-## 🚀 Stack Tecnológica
+## 🚀 Stack 
 
 - **Linguagem:** Python 3.13
 - **Framework:** FastAPI
@@ -30,7 +30,6 @@ record-api/
 │       └── __init__.py     # Inicializador da API
 ├── Dockerfile
 ├── docker-compose.yml
-├── postman_collection.json
 └── README.md
 ```
 
@@ -99,26 +98,22 @@ Lista mensagens entre dois usuários paginadas.
 
 ---
 
-## 🐳 Como Rodar com Docker
+## Build e Deploy
+
+- Primeiro, instale o [Poetry](https://python-poetry.org).
+- Depois, instale as dependências do projeto.
 
 ```bash
-docker-compose up --build
+poetry install
+```
+
+- Por fim, execute a API com o seguinte comando:
+
+```bash
+uvicorn src.record_api:app --port 8080
 ```
 
 Acesse:
 - Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
 - ReDoc: [http://localhost:8000/redoc](http://localhost:8000/redoc)
-
 ---
-
-## 🧪 Testes com Newman (Postman CLI)
-
-```bash
-newman run postman_collection.json --env-var "base_url=http://localhost:8000"
-```
-
----
-
-## ✍️ Autor
-
-Feito com 💻 por Renan · Projeto acadêmico — Integrador de Sistemas.
