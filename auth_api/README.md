@@ -4,7 +4,18 @@
 
 ## Setup
 
-- **Verifique o arquivo `.env`**
+- **Crie um arquivo `.env`, com base no arquivo .env.example**
+- Instale as dependências do projeto com o composer
+
+```sh
+composer install
+```
+
+- Por fim, execute a aplicação
+
+```sh
+php -S 0.0.0.0:8000 -t src
+```
   
 ##
 
