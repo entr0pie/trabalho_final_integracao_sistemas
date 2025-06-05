@@ -1,4 +1,3 @@
-// src/message/message.module.ts
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
@@ -9,11 +8,21 @@ import { AuthModule } from 'src/auth/auth.module';
 import { QueueService } from 'src/queue/queue.service';
 import { AuthMiddleware } from 'src/auth/auth.middleware';
 import { HttpModule } from '@nestjs/axios';
+import { CacheModule } from '@nestjs/cache-manager'; // Importando o CacheModule
+import * as redisStore from 'cache-manager-redis-store'; // Para o Redis Store
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message]),
+  imports: [
+    TypeOrmModule.forFeature([Message]),
     AuthModule,
-    HttpModule],
+    HttpModule,
+    CacheModule.register({ // Registrando o CacheModule
+      store: redisStore,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
+      ttl: 300, // Você pode configurar o TTL aqui
+    }),
+  ],
   controllers: [MessageController],
   providers: [MessageService, QueueService],
 })
