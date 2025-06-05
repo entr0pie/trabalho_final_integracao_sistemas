@@ -21,14 +21,14 @@ class MessageService:
         self.session.refresh(model)  # necessário para obter o message_id gerado
 
         # Invalida cache relacionado
-        pattern = f"messages:{data.user_id_send}:{data.user_id_receive}*"
+        pattern = f"messages:{data.userIdSend}:{data.userIdReceive}*"
         for key in redis_client.scan_iter(pattern):
             redis_client.delete(key)
 
         return SaveMessageResponse(status="success", message_id=model.message_id)
 
-    def get_messages(self, user_id_send: int, user_id_receive: int, page: int, size: int):
-        cache_key = f"messages:{user_id_send}:{user_id_receive}:{page}:{size}"
+    def get_messages(self, userIdSend: int, userIdReceive: int, page: int, size: int):
+        cache_key = f"messages:{userIdSend}:{userIdReceive}:{page}:{size}"
 
         cached_data = redis_client.get(cache_key)
         if cached_data:
@@ -36,8 +36,8 @@ class MessageService:
 
         stmt = (
             select(MessageModel)
-            .where(MessageModel.user_id_send == user_id_send)
-            .where(MessageModel.user_id_receive == user_id_receive)
+            .where(MessageModel.userIdSend == userIdSend)
+            .where(MessageModel.userIdReceive == userIdReceive)
             .order_by(MessageModel.message_id)
             .limit(size)
             .offset((page - 1) * size)

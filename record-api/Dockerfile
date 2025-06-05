@@ -14,6 +14,6 @@ COPY .env.docker .env
 
 RUN poetry install --no-root
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD ["uvicorn", "src.record_api:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "src.record_api:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
